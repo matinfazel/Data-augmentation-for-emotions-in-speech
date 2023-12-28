@@ -44,7 +44,7 @@ class ImageDataset(Dataset):
     def __len__(self):
         return min(len(self.files_A), len(self.files_B))
     
-load_shape = 286
+load_shape = (640,480)
 target_shape = 256
 
 transform = transforms.Compose([
