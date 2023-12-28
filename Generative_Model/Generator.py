@@ -1,5 +1,19 @@
 from Blocks import *
 
+def get_cycle_consistency_loss(real_X, fake_Y, gen_YX, cycle_criterion):
+
+    cycle_X = gen_YX(fake_Y)
+    cycle_loss = cycle_criterion(real_X, cycle_X)
+
+    return cycle_loss, cycle_X
+
+def get_identity_loss(real_X, gen_YX, identity_criterion):
+
+    identity_X = gen_YX(real_X)
+    identity_loss = identity_criterion(real_X, identity_X)
+    return identity_loss, identity_X
+
+    
 class Generator(nn.Module):
 
     def __init__(self, input_channels, output_channels, hidden_channels=64):

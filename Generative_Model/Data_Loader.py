@@ -3,6 +3,7 @@ import torch
 from torchvision import transforms
 import os
 from torch.utils.data import Dataset
+from torchvision.datasets import ImageFolder
 from PIL import Image
 from torchvision.utils import make_grid
 import matplotlib.pyplot as plt
@@ -16,42 +17,31 @@ def show_tensor_images(image_tensor, num_images=25, size=(1, 28, 28)):
     plt.imshow(image_grid.permute(1, 2, 0).squeeze())
     plt.show()
 
-
-class ImageDataset(Dataset):
-    def __init__(self, root, transform=None, mode='train'):
-        self.transform = transform
-        self.files_A = sorted(glob.glob(os.path.join(root, '%sA' % mode) + '/*.*'))
-        self.files_B = sorted(glob.glob(os.path.join(root, '%sB' % mode) + '/*.*'))
-        if len(self.files_A) > len(self.files_B):
-            self.files_A, self.files_B = self.files_B, self.files_A
-        self.new_perm()
-        assert len(self.files_A) > 0, "Make sure you downloaded the horse2zebra images!"
-
-    def new_perm(self):
-        self.randperm = torch.randperm(len(self.files_B))[:len(self.files_A)]
-
-    def __getitem__(self, index):
-        item_A = self.transform(Image.open(self.files_A[index % len(self.files_A)]))
-        item_B = self.transform(Image.open(self.files_B[self.randperm[index]]))
-        if item_A.shape[0] != 3:
-            item_A = item_A.repeat(3, 1, 1)
-        if item_B.shape[0] != 3:
-            item_B = item_B.repeat(3, 1, 1)
-        if index == len(self) - 1:
-            self.new_perm()
-        return (item_A - 0.5) * 2, (item_B - 0.5) * 2
-
-    def __len__(self):
-        return min(len(self.files_A), len(self.files_B))
     
 load_shape = (640,480)
-target_shape = 256
+target_shape = (640,480)
+
 
 transform = transforms.Compose([
     transforms.Resize(load_shape),
     transforms.RandomCrop(target_shape),
-    transforms.RandomHorizontalFlip(),
+    #transforms.RandomHorizontalFlip(),
     transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+
 ])
 
-dataset = ImageDataset("../angry2happy", transform=transform)
+
+dataset = ImageFolder("/content/drive/MyDrive/Spectogram/English/", transform=transform)
+def FilteredDataset(dataset, target_class):
+        # Filter the dataset based on selected classes
+        classes = {
+              'Angry':0,
+              'Happy':1,
+              'Neutral':2,
+              'Sad':3,
+              'Surprise':4
+          }
+        filtered_indices = [idx for idx in range(len(dataset)) if dataset[idx][1] == classes[target_class]]
+        print(filtered_indices)
+        return torch.utils.data.Subset(dataset, filtered_indices)

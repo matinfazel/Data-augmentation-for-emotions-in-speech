@@ -72,4 +72,10 @@ class FeatureMapBlock(nn.Module):
 
         x = self.conv(x)
         return x
+
+def get_identity_loss(real_X, gen_YX, identity_criterion):
+
+    identity_X = gen_YX(real_X)
+    identity_loss = identity_criterion(real_X, identity_X)
+    return identity_loss, identity_X
     
