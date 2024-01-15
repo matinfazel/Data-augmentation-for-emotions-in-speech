@@ -11,7 +11,7 @@ The core methodology involves the implementation of CycleGAN, a type of GAN know
 ## File Structure
 ### Spectogram.ipynb: Contains the Python scripts and Jupyter notebooks used for data preprocessing and converting .wav files to spectrograms.
 ### SER.ipynb: Includes the implementation of the CycleGan model and training for converting two classes together.
-### angry2happy/: Contains a few samples of two classes in the dataset.
+
 ## Requirements
 Python 3.x
 PyTorch (or any other deep learning framework)
